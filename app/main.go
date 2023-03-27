@@ -89,7 +89,7 @@ func findMostFollowedUsersInCountry(country string) GithubResponse {
 	// Set the GraphQL query to retrieve the top 10 most followed users in Egypt
 	query := fmt.Sprintf(`
 		{
-			search(query: "location:%s", type: USER, first: 50) {
+			search(query: "location:%s sort:followers-desc", type: USER, first: 50) {
 				nodes {
 					... on User {
 						name
