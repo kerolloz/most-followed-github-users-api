@@ -36,7 +36,8 @@ type GithubResponse struct {
 func main() {
 	// Load the environment variables from the .env file
 	err := godotenv.Load("./.env")
-	if err != nil {
+	isProduction := os.Getenv("PRODUCTION")
+	if err != nil && isProduction != "true" {
 		log.Fatalf("Error loading .env file: %v", err)
 	}
 
