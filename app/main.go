@@ -17,6 +17,7 @@ import (
 type User struct {
 	Name      string `json:"name"`
 	Login     string `json:"login"`
+	Bio       string `json:"bio"`
 	Followers struct {
 		TotalCount int `json:"totalCount"`
 	} `json:"followers"`
@@ -88,11 +89,12 @@ func findMostFollowedUsersInCountry(country string) GithubResponse {
 	// Set the GraphQL query to retrieve the top 10 most followed users in Egypt
 	query := fmt.Sprintf(`
 		{
-			search(query: "location:%s", type: USER, first: 10) {
+			search(query: "location:%s", type: USER, first: 50) {
 				nodes {
 					... on User {
 						name
 						login
+						bio
 						followers {
 							totalCount
 						}
