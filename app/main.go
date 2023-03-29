@@ -56,7 +56,7 @@ func main() {
 		country := r.URL.Query().Get("country")
 
 		// Find the top most followed users in the given country
-		githubResp := findMostFollowedUsersInCountry(country)
+		githubResp := findMostFollowedUsers(country)
 
 		// Convert the response to a JSON string
 		jsonBytes, err := json.Marshal(githubResp.Data.Search.Nodes)
@@ -84,9 +84,8 @@ func main() {
 
 }
 
-func findMostFollowedUsersInCountry(country string) GithubResponse {
+func findMostFollowedUsers(country string) GithubResponse {
 	GitHubAPIToken := os.Getenv("GITHUB_API_TOKEN")
-	// Set the GraphQL query to retrieve the top 10 most followed users in Egypt
 	query := fmt.Sprintf(`
 		{
 			search(query: "location:%s sort:followers-desc", type: USER, first: 50) {
