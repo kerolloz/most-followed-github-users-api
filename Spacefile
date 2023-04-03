@@ -1,0 +1,20 @@
+# Spacefile Docs: https://go.deta.dev/docs/spacefile/v0
+
+v: 0
+micros:
+  - name: most-followed-github-users
+    src: .
+    engine: custom
+    primary: true
+    public: true
+    commands:
+      - go build app/main.go
+    include:
+      - main
+    run: ./main
+    presets:
+      env:
+        - name: "GITHUB_API_TOKEN"
+          description: "GitHub API Token"
+        - name: "PRODUCTION"
+          default: "true"
