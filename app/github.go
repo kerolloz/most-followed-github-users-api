@@ -16,7 +16,6 @@ type User struct {
 	Followers struct {
 		TotalCount int `json:"totalCount"`
 	} `json:"followers"`
-	AvatarURL string `json:"avatarUrl"`
 }
 
 type GithubResponse struct {
@@ -41,7 +40,6 @@ func FindMostFollowedUsers(country string) GithubResponse {
 						followers {
 							totalCount
 						}
-						avatarUrl
 					}
 				}
 			}
