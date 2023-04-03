@@ -3,12 +3,12 @@
 v: 0
 micros:
   - name: most-followed-github-users
-    src: .
+    src: ./app
     engine: custom
     primary: true
     public: true
     commands:
-      - go build app/main.go
+      - go build -o main
     include:
       - main
     run: ./main
