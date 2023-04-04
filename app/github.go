@@ -28,7 +28,7 @@ type GithubResponse struct {
 	} `json:"data"`
 }
 
-func FindMostFollowedUsers(country string) GithubResponse {
+func FindMostFollowedUsers(country string) []struct{ User } {
 	query := fmt.Sprintf(`
 		{
 			search(query: "location:%s sort:followers-desc", type: USER, first: 50) {
@@ -89,5 +89,5 @@ func FindMostFollowedUsers(country string) GithubResponse {
 	if err := json.Unmarshal(body, &githubResp); err != nil {
 		panic(err)
 	}
-	return githubResp
+	return githubResp.Data.Search.Nodes
 }
