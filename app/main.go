@@ -8,11 +8,16 @@ import (
 	"os"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
+	"github.com/patrickmn/go-cache"
 )
+
+// Cache
+var c = cache.New(5*time.Minute, 10*time.Minute)
 
 func main() {
 	loadEnvVars()
@@ -61,8 +66,17 @@ func handleMostFollowedUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Call the GitHub API
-	var response []struct{ User } = FindMostFollowedUsers(country)
+	var response []struct{ User }
+
+	// Serve the response from the cache if found
+	if x, found := c.Get(country); found {
+		response = x.([]struct{ User })
+		w.Header().Set("Served-From", "Cache")
+	} else {
+		// Otherwise, fetch the response from the GitHub API and cache it
+		response = FindMostFollowedUsers(country)
+		c.SetDefault(country, response)
+	}
 
 	// Convert the response to JSON
 	jsonResponse, err := json.Marshal(response)
