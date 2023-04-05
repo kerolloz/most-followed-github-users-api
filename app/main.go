@@ -60,7 +60,7 @@ func handleMostFollowedUsers(w http.ResponseWriter, r *http.Request) {
 	country := strings.TrimSpace(r.URL.Query().Get("country"))
 
 	// Validate the country
-	isValidCountry := regexp.MustCompile(`^[a-zA-Z\\s]{2,30}$`).MatchString(country)
+	isValidCountry := regexp.MustCompile(`^[a-zA-Z\s]{2,30}$`).MatchString(country)
 	if !isValidCountry {
 		returnJSONError(w, http.StatusBadRequest, "Invalid country name")
 		return
