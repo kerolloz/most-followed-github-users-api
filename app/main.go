@@ -46,12 +46,19 @@ func main() {
 
 }
 
+/*
+ * Load environment variables from the .env file and check for required env vars.
+ */
 func loadEnvVars() {
-	// Load from the .env file
-	err := godotenv.Load("./.env")
-	isProduction := os.Getenv("PRODUCTION")
-	if err != nil && isProduction != "true" {
-		log.Fatalf("Error loading .env file: %v", err)
+	// Load variables from the .env file, don't throw an error if the file doesn't exist
+	godotenv.Load("./.env")
+
+	// Check for required environment variables
+	requiredEnvVars := []string{"GITHUB_API_TOKEN"}
+	for _, envVar := range requiredEnvVars {
+		if os.Getenv(envVar) == "" {
+			log.Fatalf("Missing required environment variable: %s", envVar)
+		}
 	}
 }
 
