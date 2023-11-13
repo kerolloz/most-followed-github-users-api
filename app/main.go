@@ -14,6 +14,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 	"github.com/patrickmn/go-cache"
+	"github.com/sbani/go-humanizer/numbers"
 )
 
 // Cache
@@ -26,6 +27,7 @@ func main() {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/most_followed_users", handleMostFollowedUsers).Methods("GET")
+	r.HandleFunc("/rank/{country}/{username}", handleRank).Methods("GET")
 
 	// Enable CORS for the route
 	corsMiddleware := handlers.CORS(
@@ -60,6 +62,24 @@ func loadEnvVars() {
 			log.Fatalf("Missing required environment variable: %s", envVar)
 		}
 	}
+}
+
+func handleRank(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	country := params["country"]
+	username := params["username"]
+	rank := FindUserRank(username, country)
+	ordinalRank := ""
+
+	if rank == -1 {
+		ordinalRank = "not found"
+	} else {
+		ordinalRank = numbers.Ordinalize(rank)
+	}
+
+	jsonResponse, _ := json.Marshal(map[string]string{"rank": ordinalRank})
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonResponse)
 }
 
 func handleMostFollowedUsers(w http.ResponseWriter, r *http.Request) {

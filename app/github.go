@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 )
@@ -26,6 +26,16 @@ type GithubResponse struct {
 			} `json:"nodes"`
 		} `json:"search"`
 	} `json:"data"`
+}
+
+func FindUserRank(username string, country string) int {
+	mostFollowedUsers := FindMostFollowedUsers(country)
+	for i, u := range mostFollowedUsers {
+		if u.Login == username {
+			return i + 1
+		}
+	}
+	return -1
 }
 
 func FindMostFollowedUsers(country string) []struct{ User } {
@@ -79,7 +89,7 @@ func FindMostFollowedUsers(country string) []struct{ User } {
 	defer resp.Body.Close()
 
 	// Read the response body
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		panic(err)
 	}
