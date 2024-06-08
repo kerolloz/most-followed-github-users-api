@@ -3,9 +3,9 @@
   Returns a list of the top 50 most followed GitHub users in a particular country
 </p>
 <p align="center">
-  <img src="https://t.ly/plOs" alt="go" />
-  <img src="https://t.ly/MMyE" alt="deta" />
-  <img src="https://t.ly/ljN-f" alt="github" />
+  <img src="https://img.shields.io/static/v1?logo=go&label=&message=go&&color=333&style=for-the-badge" alt="go" />
+  <img src="https://img.shields.io/static/v1?logo=fastify&label=&message=Fastify&style=for-the-badge&color=333" alt="deta" />
+  <img src="https://img.shields.io/static/v1?logo=github&label=&message=github&&color=333&style=for-the-badge" alt="github" />
 </p>
 <p align="center">
   <img src="https://user-images.githubusercontent.com/36763164/232241911-c0771365-225c-49fc-b22a-8351b54336b9.png" width="500px" />
