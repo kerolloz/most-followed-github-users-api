@@ -31,7 +31,6 @@ func main() {
 		ContentTypeNosniff:    true,
 		BrowserXssFilter:      true,
 		ContentSecurityPolicy: "script-src $NONCE",
-		IsDevelopment:         true,
 	})
 
 	// Create a new Gorilla mux router
