@@ -9,6 +9,8 @@ require (
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 )
 
+require github.com/unrolled/secure v1.15.0 // indirect
+
 require (
 	github.com/felixge/httpsnoop v1.0.1 // indirect
 	github.com/sbani/go-humanizer v0.3.2

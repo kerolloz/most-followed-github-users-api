@@ -15,6 +15,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/patrickmn/go-cache"
 	"github.com/sbani/go-humanizer/numbers"
+	"github.com/unrolled/secure"
 )
 
 // Cache
@@ -23,18 +24,30 @@ var c = cache.New(5*time.Minute, 10*time.Minute)
 func main() {
 	loadEnvVars()
 
+	secureMiddleware := secure.New(secure.Options{
+		AllowedHostsAreRegex:  true,
+		HostsProxyHeaders:     []string{"X-Forwarded-Host"},
+		SSLRedirect:           true,
+		SSLProxyHeaders:       map[string]string{"X-Forwarded-Proto": "https"},
+		STSSeconds:            31536000,
+		STSIncludeSubdomains:  true,
+		STSPreload:            true,
+		FrameDeny:             true,
+		ContentTypeNosniff:    true,
+		BrowserXssFilter:      true,
+		ContentSecurityPolicy: "script-src $NONCE",
+	})
+
 	// Create a new Gorilla mux router
 	r := mux.NewRouter()
+	r.Use(secureMiddleware.Handler)
+	r.Use(GzipMiddleware)
 
 	r.HandleFunc("/most_followed_users", handleMostFollowedUsers).Methods("GET")
 	r.HandleFunc("/rank/{country}/{username}", handleRank).Methods("GET")
 
 	// Enable CORS for the route
-	corsMiddleware := handlers.CORS(
-		handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}),
-		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
-		handlers.AllowedOrigins([]string{"*"}),
-	)
+	corsMiddleware := handlers.CORS(handlers.AllowedOrigins([]string{"*"}))
 
 	port := os.Getenv("PORT")
 	if port == "" {
