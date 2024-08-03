@@ -8,18 +8,13 @@ import (
 	"os"
 	"regexp"
 	"strings"
-	"time"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
-	"github.com/patrickmn/go-cache"
 	"github.com/sbani/go-humanizer/numbers"
 	"github.com/unrolled/secure"
 )
-
-// Cache
-var c = cache.New(5*time.Minute, 10*time.Minute)
 
 func main() {
 	loadEnvVars()
@@ -36,6 +31,7 @@ func main() {
 		ContentTypeNosniff:    true,
 		BrowserXssFilter:      true,
 		ContentSecurityPolicy: "script-src $NONCE",
+		IsDevelopment:         true,
 	})
 
 	// Create a new Gorilla mux router
@@ -81,8 +77,19 @@ func handleRank(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	country := params["country"]
 	username := params["username"]
-	rank := FindUserRank(username, country)
-	ordinalRank := ""
+
+	var rank int
+
+	// Serve the response from the cache if found
+	cacheKey := country + "/" + username
+	userRankFinder := func() interface{} { return FindUserRank(username, country) }
+	value, isCacheHit := GetFromCacheOrEvaluateFunction(cacheKey, userRankFinder)
+	rank = value.(int)
+	if isCacheHit {
+		w.Header().Set("Served-From", "Cache")
+	}
+
+	var ordinalRank string
 
 	if rank == -1 {
 		ordinalRank = "not found"
@@ -109,13 +116,12 @@ func handleMostFollowedUsers(w http.ResponseWriter, r *http.Request) {
 	var response []struct{ User }
 
 	// Serve the response from the cache if found
-	if x, found := c.Get(country); found {
-		response = x.([]struct{ User })
+	cacheKey := country
+	mostFollowedUsersFinder := func() interface{} { return FindMostFollowedUsers(country) }
+	value, isCacheHit := GetFromCacheOrEvaluateFunction(cacheKey, mostFollowedUsersFinder)
+	response = value.([]struct{ User })
+	if isCacheHit {
 		w.Header().Set("Served-From", "Cache")
-	} else {
-		// Otherwise, fetch the response from the GitHub API and cache it
-		response = FindMostFollowedUsers(country)
-		c.SetDefault(country, response)
 	}
 
 	// Convert the response to JSON
