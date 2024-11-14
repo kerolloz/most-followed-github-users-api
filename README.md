@@ -46,3 +46,5 @@ If you would like to contribute to the project, please follow these steps:
 3. Make your changes and commit them
 4. Push your changes to your forked repository
 5. Open a pull request
+
+<sup>Frontend repository: https://github.com/kerolloz/most-followed-github-users</sup>
